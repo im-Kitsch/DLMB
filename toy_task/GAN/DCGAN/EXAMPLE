@@ -1,0 +1,2 @@
+python dcgan.py --dataset mnist --dataroot ../vanilla_gan/MNIST_data --cuda --outf ./result
+
