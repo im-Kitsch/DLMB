@@ -1,0 +1,15 @@
+blosc>=1.8.1,<2
+diskcache==4.1.0
+h5py
+jupyter
+matplotlib
+numpy
+Pillow
+scikit-image
+scipy
+pandas
+SimpleITK
+tensorflow # for tensorboard
+
+torch==1.7
+torchvision
