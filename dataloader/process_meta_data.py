@@ -9,10 +9,12 @@ LesionInfoTuple = namedtuple(
     'lesion_id, image_id, disease_type, analytical_method, age, sex, localization',
 )
 
+PATH_TO_METADATA = "E:/datasets/HAM10000/HAM10000_metadata.csv"
+#PATH_TO_METADATA = "/usr/src/rawdata/HAM10000_metadata.csv"
 
 @functools.lru_cache(1)
 def get_lesion_infos():
-    df = pandas.read_csv("/usr/src/rawdata/HAM10000_metadata.csv")
+    df = pandas.read_csv(PATH_TO_METADATA)
 
     mean_age = df.groupby('sex', as_index=False).age.mean().age
 
@@ -29,7 +31,7 @@ def get_lesion_infos():
 
     lesion_infos = []
 
-    with open('/usr/src/rawdata/HAM10000_metadata.csv', "r") as f:
+    with open(PATH_TO_METADATA, "r") as f:
         for row in list(csv.reader(f))[1:]:
             if len(row[0]) == 0:
                 # handle empty rows

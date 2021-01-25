@@ -15,6 +15,8 @@ log = logging.getLogger(__name__)
 # log.setLevel(logging.INFO)
 log.setLevel(logging.DEBUG)
 
+PATH_TO_IMAGES = "E:\datasets\HAM10000\HAM10000_images"
+
 
 class SkinLesionDataset(Dataset):
     def __init__(self,
@@ -30,7 +32,8 @@ class SkinLesionDataset(Dataset):
 
         self.lesion_infos = copy.copy(get_lesion_infos())
 
-        self.jpgs_paths = glob.glob('/usr/src/rawdata/*.jpg')
+        self.jpgs_paths = glob.glob(PATH_TO_IMAGES + '\*.jpg')
+        print(len(self.jpgs_paths))
 
         if lesion_id:
             self.lesion_infos = [
@@ -44,7 +47,7 @@ class SkinLesionDataset(Dataset):
         elif val_stride > 0:
             del self.lesion_infos[::val_stride]
             assert self.lesion_infos
-
+        print(len(self.lesion_infos[0]))
         log.info('{!r}: {} {} samples'.format(
             self,
             len(self.lesion_infos),
@@ -52,13 +55,13 @@ class SkinLesionDataset(Dataset):
         ))
 
     def __len__(self):
-        return len(self.lesion_infos)
+        return len(self.lesion_infos[0])
 
     def __getitem__(self, idx):
         lesion_infos_tup = self.lesion_infos[0][idx]
         image_path = ''
         for path in self.jpgs_paths:
-            image_id = path.split('/')[-1].split('.')[0]
+            image_id = path.split("\\")[-1].split('.')[0]
             if image_id == lesion_infos_tup.image_id:
                 image_path = path
                 break
@@ -68,7 +71,6 @@ class SkinLesionDataset(Dataset):
                 self,
                 lesion_infos_tup.image_id)
             )
-
         image = Image.open(image_path).convert('RGB')
         tensor_image = self.transform(image)
         return tensor_image, torch.tensor(lesion_infos_tup[2:]),

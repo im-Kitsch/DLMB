@@ -2,8 +2,9 @@ import torch.nn as nn
 
 
 class Discriminator(nn.Module):
-    def __init__(self, image_channels, features_d):
+    def __init__(self, image_channels, features_d, ngpu=1):
         super().__init__()
+        self.ngpu = ngpu
         self.disc = nn.Sequential(
             # input dims: N x 3 x 64 x 64
             nn.Conv2d(
@@ -34,12 +35,17 @@ class Discriminator(nn.Module):
         )
 
     def forward(self, x):
-        return self.disc(x)
+        if x.is_cuda and self.ngpu > 1:
+            output = nn.parallel.data_parallel(self.disc, x, range(self.ngpu))
+        else:
+            output = self.disc(x)
+        return output.view(-1, 1).squeeze(1)
 
 
 class Generator(nn.Module):
-    def __init__(self, noise_vector, image_channels, features_g):
+    def __init__(self, noise_vector, image_channels, features_g, ngpu=1):
         super().__init__()
+        self.ngpu = ngpu
         self.gan = nn.Sequential(
             # input dims: N x noise_vector x 1 x 1
             self._block(noise_vector, features_g * 16, 4, 1, 0),  # img: 4x4
@@ -68,4 +74,18 @@ class Generator(nn.Module):
         )
 
     def forward(self, x):
-        return self.gan(x)
+        if x.is_cuda and self.ngpu > 1:
+            output = nn.parallel.data_parallel(self.gan, x, range(self.ngpu))
+        else:
+            output = self.gan(x)
+        return output
+
+
+def init_weights(model):
+    """
+    Initialize weights based on DC-GAN paper
+    :param model:
+    """
+    for m in model.modules():
+        if isinstance(m, (nn.Conv2d, nn.ConvTranspose2d, nn.BatchNorm2d)):
+            nn.init.normal_(m.weight.data, 0.0, 0.02)
