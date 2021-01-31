@@ -10,9 +10,9 @@ IF_CUDA = True if torch.cuda.is_available() else False
 DEVICE = torch.device('cuda') if IF_CUDA else torch.device('cpu')
 
 
-class MLPEncoder(torch.nn.Module):
+class ConvEncoder(torch.nn.Module):
     def __init__(self, z_dim, n_class, img_ch, img_size):
-        super(MLPDecoder, self).__init__()
+        super(ConvEncoder, self).__init__()
         self.img_ch = img_ch
         self.img_size = img_size
         self.n_class = n_class
@@ -23,9 +23,12 @@ class MLPEncoder(torch.nn.Module):
         return
 
 
-class MLPDecoder(torch.nn.Module):
-    def __init__(self):
-        super(MLPDecoder, self).__init__()
+class ConvDecoder(torch.nn.Module):
+    def __init__(self, z_dim, n_class, img_ch, img_size):
+        super(ConvDecoder, self).__init__()
+        self.img_ch = img_ch
+        self.img_size = img_size
+        self.n_class = n_class
         return
 
     def forward(self):

@@ -84,7 +84,7 @@ class GAN:
         epoch_score_p = 0.
         epoch_score_f = 0.
 
-        writer =SummaryWriter()
+        writer = SummaryWriter()
 
         test_noise = torch.randn(64, self.dim_noise, device="cuda:0")
         for i in range(n_epoch):

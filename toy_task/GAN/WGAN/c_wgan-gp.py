@@ -152,7 +152,7 @@ class GAN:
                     pbar.set_postfix({"d_loss": d_loss, "g_loss": g_loss,
                                       "p_score": p_score, "f_score": f_score})
                     pbar.update()
-                epoch_loss_g = epoch_loss_g/(k+1)
+                epoch_loss_g = epoch_loss_g/(k+1)  # TODO not exactly right
                 epoch_loss_d = epoch_loss_d/(k+1)
                 epoch_score_p /= k+1
                 epoch_score_f /= k+1
@@ -248,7 +248,7 @@ def main(args):
                                                       torchvision.transforms.Normalize([0.5], [0.5])])
     else:
         raise Exception['you have not defined this dataset']
-    data_train = torchvision.datasets.MNIST(root=args.data_root,transform=m_transform, train=True,
+    data_train = torchvision.datasets.MNIST(root=args.data_root, transform=m_transform, train=True,
                                             download=True)
     data_test = torchvision.datasets.MNIST(root=args.data_root, transform=m_transform, train=False)
 
