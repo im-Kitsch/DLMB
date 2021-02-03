@@ -23,7 +23,7 @@ class HAM10000Dataset(Dataset):
         return self.csv_file.shape[0]
 
     def __getitem__(self, idx):
-        img_file, img_lbl = self.csv_file.loc[2, 'image_id'], self.csv_file.loc[2, 'dx']
+        img_file, img_lbl = self.csv_file.loc[idx, 'image_id'], self.csv_file.loc[idx, 'dx']
         img_path = os.path.join(self.img_root, img_file+'.jpg')
         img = Image.open(img_path)
         if self.transform is not None:
