@@ -13,6 +13,7 @@ def load_dataset(dataset_name, root, transform=None, csv_file=None):
     root = os.path.join(root, dataset_name)
     if dataset_name == 'MNIST':
         train_data = torchvision.datasets.MNIST(root=root, transform=transform, train=True, download=True)
+        train_data = torch.utils.data.Subset(train_data, range(10000))  # use a smaller dataset to speed up
         test_data = torchvision.datasets.MNIST(root=root, transform=transform, train=False)
         # img_info = (1, 28, 28)
     elif dataset_name == 'CIFAR10':

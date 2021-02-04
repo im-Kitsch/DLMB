@@ -118,6 +118,12 @@ class DCGAN(torch.nn.Module):
 
         test_noise = self.generate_noise(64)
         n_sample = len(train_loader.dataset)
+
+        test_img = self.conv_gen(test_noise)
+        test_img = (test_img + 1.0) / 2.0  # Note that this is important to recover the range
+        test_img = test_img.reshape(64, *self.img_shape)
+        writer.add_images('img', test_img, 0)
+
         for i in range(n_epoc):
             epoc_l_d, epoc_l_g, epoc_score_p, epoc_score_f1, epoc_score_f2 = 0., 0., 0., 0., 0.
             self.conv_gen.train(), self.conv_dis.train()
@@ -222,9 +228,10 @@ def main(args):
         trans = torchvision.transforms.Compose(
             [torchvision.transforms.CenterCrop(450),
              torchvision.transforms.Resize(args.img_size),
+             # torchvision.transforms.CenterCrop(args.img_size),
              torchvision.transforms.ToTensor(),
-             torchvision.transforms.Normalize(TRANS_MEAN, TRANS_STD)])
-             # torchvision.transforms.Normalize([0.5, 0.5, 0.5], [0.5, 0.5, 0.5])])
+             # torchvision.transforms.Normalize(TRANS_MEAN, TRANS_STD)])
+             torchvision.transforms.Normalize([0.5, 0.5, 0.5], [0.5, 0.5, 0.5])])
     else:
         raise Exception('dataset not right')
 
@@ -250,13 +257,20 @@ if __name__ == '__main__':
     parser.add_argument('--csv-file', default='/home/yuan/Documents/datas/HAM10000/HAM10000_metadata.csv')
     parser.add_argument('--n-epoc', default=25, type=int)
     parser.add_argument('--d-step', default=1, type=int)
-    parser.add_argument('--batch_size', default=256, type=int)
+    parser.add_argument('--batch_size', default=64, type=int)
     parser.add_argument('--z-dim', default=100, type=int, help='noise shape')
-    parser.add_argument('--lr-g', default=3e-4, type=float)
-    parser.add_argument('--lr-d', default=3e-4, type=float)
+    parser.add_argument('--lr-g', default=2e-4, type=float)
+    parser.add_argument('--lr-d', default=2e-4, type=float)
     parser.add_argument('--lr-beta1', default=0.5, type=float)
     parser.add_argument('--lr-beta2', default=0.999, type=float)
     parser.add_argument('--img-size', default=64, type=int, help='resize the img size')
+    parser.add_argument('--device', default='cuda', help='gpu or cpu for trainning')
     para_args = parser.parse_args()
 
+    if para_args.device == 'cuda' and IF_CUDA is True:  # TODO to improve it
+        IF_CUDA = True
+        DEVICE = torch.device('cuda')
+    else:
+        IF_CUDA = False
+        DEVICE = torch.device('cpu')
     main(para_args)

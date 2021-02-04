@@ -106,6 +106,7 @@ class WGanGP(torch.nn.Module):
 
         self.conv_gen = ConvGenerator(n_ch=n_ch, img_size=img_size, z_dim=z_dim)
         self.conv_dis = ConvDiscriminator(n_ch=n_ch, img_size=img_size)
+        # TODO not sure if it is needed to use weight init, but seems better than without init
         self.conv_gen.main.apply(weights_init)  # TODO to find a better method to initialization instead of using main
         self.conv_dis.main.apply(weights_init)
         if IF_CUDA:
@@ -117,7 +118,7 @@ class WGanGP(torch.nn.Module):
         return
 
     def train_net(self, train_loader, n_epoc):
-        writer = SummaryWriter(comment=f'_DCGAN_{self.data_name}')
+        writer = SummaryWriter(comment=f'_DCGAN_{self.data_name}')  # TODO to add hyper parmeters
 
         test_noise = self.generate_noise(64)
         n_sample = len(train_loader.dataset)
@@ -282,8 +283,8 @@ if __name__ == '__main__':
     parser.add_argument('--csv-file', default='/home/yuan/Documents/datas/HAM10000/HAM10000_metadata.csv')
     parser.add_argument('--n-epoc', default=25, type=int)
     parser.add_argument('--d-step', default=1, type=int)
-    parser.add_argument('--batch_size', default=256, type=int)
-    parser.add_argument('--z-dim', default=100, type=int, help='noise shape')
+    parser.add_argument('--batch-size', default=256, type=int)
+    parser.add_argument('--z-dim', default=128, type=int, help='noise shape')
     parser.add_argument('--lr-g', default=3e-4, type=float)
     parser.add_argument('--lr-d', default=3e-4, type=float)
     parser.add_argument('--lr-beta1', default=0.5, type=float)
