@@ -5,6 +5,7 @@ import torch
 from torch.utils import data
 from tqdm import tqdm
 from torch.utils.tensorboard import SummaryWriter
+import torchsummary
 
 import util.dataset_util
 
@@ -118,7 +119,7 @@ class WGanGP(torch.nn.Module):
         return
 
     def train_net(self, train_loader, n_epoc):
-        writer = SummaryWriter(comment=f'_DCGAN_{self.data_name}')  # TODO to add hyper parmeters
+        writer = SummaryWriter(comment=f'_WGAN_GP_{self.data_name}')  # TODO to add hyper parmeters
 
         test_noise = self.generate_noise(64)
         n_sample = len(train_loader.dataset)
@@ -162,6 +163,7 @@ class WGanGP(torch.nn.Module):
             test_img = (test_img + 1.0) / 2.0  # Note that this is important to recover the range
             test_img = test_img.reshape(64, *self.img_shape)
             writer.add_images('img', test_img, i + 1)
+        writer.close()
         return
 
     def train_g_step(self, batch_size):
@@ -213,23 +215,6 @@ class WGanGP(torch.nn.Module):
             score_real += p_p.mean().item()
             score_fake += p_f.mean().item()
             d_loss += loss.item()
-            # lbl_real = torch.ones(batch_size, device=DEVICE)
-            # lbl_fake = torch.zeros(batch_size, device=DEVICE)
-            #
-            # p_fake = self.conv_dis(data_fake)
-            # p_real = self.conv_dis(data_real)
-            #
-            # loss_real = self.criterion(p_real.reshape(-1), lbl_real)
-            # loss_fake = self.criterion(p_fake.reshape(-1), lbl_fake)
-            # loss = loss_real + loss_fake
-            #
-            # self.opt_D.zero_grad()
-            # loss.backward()
-            # self.opt_D.step()
-            #
-            # score_real += p_real.mean().item()
-            # score_fake += p_fake.mean().item()
-            # d_loss += loss.item()
         return d_loss / d_step, score_real / d_step, score_fake / d_step
 
     # TODO different method to generate noise
@@ -252,12 +237,22 @@ def main(args):
              torchvision.transforms.ToTensor(),
              torchvision.transforms.Normalize([0.5, 0.5, 0.5], [0.5, 0.5, 0.5])])
     elif args.data == 'HAM10000':
-        trans = torchvision.transforms.Compose([
-             # torchvision.transforms.CenterCrop(450),
-             torchvision.transforms.Resize((args.img_size, args.img_size)),
-             torchvision.transforms.ToTensor(),
-             # torchvision.transforms.Normalize(TRANS_MEAN, TRANS_STD)])
-             torchvision.transforms.Normalize([0.5, 0.5, 0.5], [0.5, 0.5, 0.5])])
+        if args.data_aug is True:
+            trans = torchvision.transforms.Compose([
+                torchvision.transforms.RandomResizedCrop(size=(args.img_size, args.img_size), scale=(0.7, 1.0),
+                                                         ratio=(4 / 5, 5 / 4), interpolation=2),
+                torchvision.transforms.RandomHorizontalFlip(p=0.5),
+                torchvision.transforms.RandomVerticalFlip(p=0.5),
+                torchvision.transforms.ToTensor(),
+                torchvision.transforms.Normalize(TRANS_MEAN, TRANS_STD)
+            ])
+        else:
+            trans = torchvision.transforms.Compose([
+                 torchvision.transforms.Resize((args.img_size, args.img_size)),
+                 torchvision.transforms.ToTensor(),
+                 torchvision.transforms.Normalize(TRANS_MEAN, TRANS_STD)
+                 # torchvision.transforms.Normalize([0.5, 0.5, 0.5], [0.5, 0.5, 0.5])])
+                 ])
     else:
         raise Exception('dataset not right')
 
@@ -269,9 +264,12 @@ def main(args):
                                    num_workers=4, pin_memory=True)
 
     dc_gan = WGanGP(data_name=args.data, n_ch=n_ch, img_size=img_size,
-                   z_dim=args.z_dim, lr_g=args.lr_g, lr_d=args.lr_d,
-                   lr_beta1=args.lr_beta1, lr_beta2=args.lr_beta2, d_step=args.d_step)
-
+                    z_dim=args.z_dim, lr_g=args.lr_g, lr_d=args.lr_d,
+                    lr_beta1=args.lr_beta1, lr_beta2=args.lr_beta2, d_step=args.d_step)
+    torchsummary.summary(dc_gan.conv_dis, input_size=dc_gan.img_shape, batch_size=-1,
+                         device='cuda' if IF_CUDA else 'cpu')
+    torchsummary.summary(dc_gan.conv_gen, input_size=(dc_gan.z_dim, 1, 1), batch_size=-1,
+                         device='cuda' if IF_CUDA else 'cpu')
     dc_gan.train_net(train_loader=train_loader, n_epoc=args.n_epoc)
     return
 
@@ -284,12 +282,17 @@ if __name__ == '__main__':
     parser.add_argument('--n-epoc', default=25, type=int)
     parser.add_argument('--d-step', default=1, type=int)
     parser.add_argument('--batch-size', default=256, type=int)
-    parser.add_argument('--z-dim', default=128, type=int, help='noise shape')
+    parser.add_argument('--z-dim', default=64, type=int, help='noise shape')
     parser.add_argument('--lr-g', default=3e-4, type=float)
     parser.add_argument('--lr-d', default=3e-4, type=float)
     parser.add_argument('--lr-beta1', default=0.5, type=float)
     parser.add_argument('--lr-beta2', default=0.999, type=float)
+    # img_size could not be changed here
     parser.add_argument('--img-size', default=64, type=int, help='resize the img size')
+    parser.add_argument('--data-percentage', default=1.0, type=float)
+    parser.add_argument('--data-aug', action='store_true', help='if use data augmentation or not')
     para_args = parser.parse_args()
 
     main(para_args)
+
+# TODO torchsummarpy ; catch ctl-c; recover from last(writer path, model, optimizer, hyperparameter) hyperparameter
