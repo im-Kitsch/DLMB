@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox, filedialog, ttk
 import os
+import cwgan_gp
 
 
 class DLMBApp(tk.Tk):
@@ -106,8 +107,20 @@ class StartPage(tk.Frame):
             self.controller.selected_checkpoint = values[0]
 
     def handle_training(self, new, checkpoint):
+        training_args = {'data': 'HAM10000', 'root': './',
+                         'csv_file': './HAM10000_metadata.csv', 'n_epoc': 25,
+                         'd_step': 1,
+                         'batch_size': 64, 'z_dim': 64, 'ndf': 64, 'ngf': 64, 'depth': 5, 'img_size': 64,
+                         'lr_g': 0.0001, 'lr_d': 0.0005,
+                         'lr_beta1': 0.0, 'lr_beta2': 0.99, 'data_percentage': 1.0, 'data_aug': False,
+                         'condition': False,
+                         'embedding_dim': 64, 'recover': False, 'checkpoint_file': '', 'checkpoint_factor': 20}
+
         if new:
             self.controller.show_frame("StartTrainingPage")
+            cwgan_gp.main(args=DotDict(training_args))
+
+
         elif checkpoint is None:
             messagebox.showwarning(title="Invalid selection", message="You need to select a checkpoint in order to "
                                                                       "continue Training!")
@@ -149,6 +162,13 @@ class StartTrainingPage(tk.Frame):
         button = tk.Button(self, text="Go to the start page",
                            command=lambda: controller.show_frame("StartPage"))
         button.pack()
+
+
+class DotDict(dict):
+    """dot.notation access to dictionary attributes"""
+    __getattr__ = dict.get
+    __setattr__ = dict.__setitem__
+    __delattr__ = dict.__delitem__
 
 
 if __name__ == "__main__":
