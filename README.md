@@ -37,7 +37,7 @@ tensorboard --logdir=$DLMB_FOLDER
 To continue the training with checkpoint, try this command, note that if you recover
 from ckpt file, the other parameters will be disabled, and use the old parameter to train.
 ```
-python cwagan_gp.py --data HAM10000 --recover --checkpoint-file $ckpt_file.pth
+python cwgan_gp.py --data HAM10000 --recover --checkpoint-file $ckpt_file.pth
 ```
 
 The entry to run the file is cwgan_gp.py. The parameters are defined as 
