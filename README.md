@@ -22,6 +22,18 @@ Assume that you have the folder $DATA_ROOT/HAM10000/img that saves
 all the HAM10000 images.  Besides you need corresponding file meta.csv.
 The data could be download here[<sup>5</sup>](#HAM1000).
 
+A example of training:
+```
+python cwagan_gp.py --data HAM10000 --root $data --csv-file $csv_file
+                    --depth 5 --img-size 64 --batch-size 64 --checkpoint-factor 10
+```
+To check the learning process use tensorboard, (default in `./runs`), if the image doesn't change with 
+step continuously, try to add `--samples_per_plugin images=0`
+ 
+```
+tensorboard --logdir=$DLMB_FOLDER
+```
+
 The entry to run the file is cwgan_gp.py. The parameters are defined as 
 ```
 usage: cwgan_gp.py [-h] --data DATA [--root ROOT] [--csv-file CSV_FILE] [--n-epoc N_EPOC] 
