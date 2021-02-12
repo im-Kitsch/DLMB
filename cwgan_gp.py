@@ -345,6 +345,8 @@ class WGanGP(torch.nn.Module):
 
 
 def main(args, if_continue=False, checkpoint=None):
+    print('the parameters')
+    print(args)
     if args.data == 'MNIST':
         trans = torchvision.transforms.Compose(
             [torchvision.transforms.Resize(args.img_size),
@@ -419,29 +421,47 @@ def main(args, if_continue=False, checkpoint=None):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="parse args")
-    parser.add_argument('--data', required=True, help='MNIST|CIFAR10|HAM10000')
-    parser.add_argument('--root', default='/home/yuan/Documents/datas/', help='root')
-    parser.add_argument('--csv-file', default='/home/yuan/Documents/datas/HAM10000/HAM10000_metadata.csv')
-    parser.add_argument('--n-epoc', default=25, type=int)
-    parser.add_argument('--d-step', default=1, type=int)
-    parser.add_argument('--batch-size', default=64, type=int)
-    parser.add_argument('--z-dim', default=64, type=int, help='noise shape')
-    parser.add_argument('--ndf', default=64, type=int)
-    parser.add_argument('--ngf', default=64, type=int)
-    parser.add_argument('--depth', default=5, type=int)
-    parser.add_argument('--lr-g', default=1e-4, type=float)
-    parser.add_argument('--lr-d', default=5e-4, type=float)
-    parser.add_argument('--lr-beta1', default=0., type=float)
-    parser.add_argument('--lr-beta2', default=0.99, type=float)
-    parser.add_argument('--img-size', default=64, type=int, help='resize the img size')
-    parser.add_argument('--data-percentage', default=1.0, type=float)
-    parser.add_argument('--data-aug', action='store_true', help='if use data augmentation or not')
-    parser.add_argument('--condition', action='store_true', help='if use condition')
-    parser.add_argument('--embedding-dim', default=64, help='')
-    parser.add_argument('--recover', action='store_true', help='if continue training from prior checkpoint')
+    parser.add_argument('--data', required=True, help='MNIST|CIFAR10|HAM10000, name of dataset used for training, '
+                                                      'only support MNIST CIFAR10 and HAM10000 ')
+    parser.add_argument('--root', default='/home/yuan/Documents/datas/',
+                        help='root folder for dataset, '
+                             'for HAM10000, you are supposed to have a folder with $DATA_ROOT/HAM10000/img/ that '
+                             'contains all the HAM10000 images. The --root requires the upper path $DATA_ROOT,'
+                             'for MNIST and CIFAR10 will automatically download in give root path '
+                             'if there is no corresponding dataset')
+    parser.add_argument('--csv-file', default='/home/yuan/Documents/datas/HAM10000/HAM10000_metadata.csv',
+                        help='only used for HAM10000, the corresponding metadata file')
+    parser.add_argument('--n-epoc', default=25, type=int, help='epochs for training')
+    parser.add_argument('--d-step', default=1, type=int, help='steps for training discriminator per gan training step')
+    parser.add_argument('--batch-size', default=64, type=int, help='batch size for training')
+    parser.add_argument('--z-dim', default=64, type=int, help='noise shape for generator')
+    parser.add_argument('--ndf', default=64, type=int, help='number of discriminator feature, '
+                                                            'check the introduction of network')
+    parser.add_argument('--ngf', default=64, type=int, help='number of generator feature, '
+                                                            'check the introduction of network')
+    parser.add_argument('--depth', default=5, type=int, help='how deep the network is. note that it must be more '
+                                                             'than three, also it must correspond the --img-size, i.e.'
+                                                             'depth:img_size, 5:64, 6:128, 7:256...')
+    parser.add_argument('--img-size', default=64, type=int, help='resize the original image, it must correspond to '
+                                                                 '--depth, i.e. depth:img_size, 5:64, 6:128, 7:256...')
+    parser.add_argument('--lr-g', default=1e-4, type=float, help='learning rate of generator')
+    parser.add_argument('--lr-d', default=5e-4, type=float, help='learning rate of discriminator')
+    parser.add_argument('--lr-beta1', default=0., type=float, help='beta1 for ADAM optimizer ')
+    parser.add_argument('--lr-beta2', default=0.99, type=float, help='beta2 for ADAM optimizer')
+    parser.add_argument('--data-percentage', default=1.0, type=float, help='(0.0, 1.0], how many percentage of data '
+                                                                           'will be used for training')
+    parser.add_argument('--data-aug', action='store_true', help='if use data augmentation or not, augmentation includes'
+                                                                'random horizontal/vertical flip, random resized crop')
+    parser.add_argument('--condition', action='store_true', help='if use conditional training')
+    parser.add_argument('--embedding-dim', default=64,
+                        help='embedding dim, used for embedding layer of label: disease type')
+    parser.add_argument('--recover', action='store_true', help='if continue training from prior checkpoint,'
+                                                               'if use this, all the other parameters are disabled,'
+                                                               'the parameter of checkpoints parameter will be used')
     # TODO seems to redundent here
-    parser.add_argument('--checkpoint-file', default='', type=str, help='')
-    parser.add_argument('--checkpoint-factor', default=20, type=int, help='')
+    parser.add_argument('--checkpoint-file', default='', type=str, help='checkpoint file path')
+    parser.add_argument('--checkpoint-factor', default=20, type=int, help='the model will be checked '
+                                                                          'every $ckpt-factor epoch')
     para_args = parser.parse_args()
 
     if para_args.recover is True:
