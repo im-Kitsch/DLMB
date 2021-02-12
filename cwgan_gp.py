@@ -468,7 +468,11 @@ if __name__ == '__main__':
         #  TODO this seems not safe
         checkpoint = torch.load(para_args.checkpoint_file)
         loaded_args = argparse.Namespace()
-        loaded_args.__dict__ = checkpoint['arg']
+        # not safe to visit *.__dict__
+        # loaded_args.__dict__ = checkpoint['arg']
+        arg_dict = checkpoint['arg']
+        for attr_key in arg_dict.keys():
+            setattr(loaded_args, attr_key, arg_dict[attr_key])
         main(loaded_args, if_continue=True, checkpoint=checkpoint)
     else:
         main(para_args, if_continue=False, checkpoint=None)
