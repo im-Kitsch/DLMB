@@ -188,7 +188,10 @@ class WGanGP(torch.nn.Module):
     def train_net(self, train_loader, n_epoc, checkpoint_factor, arg,
                   if_continue, checkpoint_epoc=None, log_dir=None):  # TODO arg is not good to pass here
         if log_dir is None:
-            writer = SummaryWriter(comment=f'_WGAN_GP_{self.data_name}')  # TODO to add hyper parmeters
+            if self.if_condition:
+                writer = SummaryWriter(comment=f'_CWGAN_GP_{self.data_name}')  # TODO to add hyper parmeters
+            else:
+                writer = SummaryWriter(comment=f'_WGAN_GP_{self.data_name}')
         else:
             writer = SummaryWriter(log_dir=log_dir)
 
@@ -338,7 +341,7 @@ class WGanGP(torch.nn.Module):
             #     condition = torch.randint(low=0, high=self.n_class, size=(batch_size, 1))
             return self.conv_gen(self.generate_noise(batch_size), condition)
         else:
-            return self.conv_gen(self.generate_noise(batch_size))
+            return self.conv_gen(self.generate_noise(batch_size), None)
 
 
 def main(args, if_continue=False, checkpoint=None):
