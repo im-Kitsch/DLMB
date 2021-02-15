@@ -453,7 +453,7 @@ if __name__ == '__main__':
     parser.add_argument('--data-aug', action='store_true', help='if use data augmentation or not, augmentation includes'
                                                                 'random horizontal/vertical flip, random resized crop')
     parser.add_argument('--condition', action='store_true', help='if use conditional training')
-    parser.add_argument('--embedding-dim', default=64,
+    parser.add_argument('--embedding-dim', default=64, type=int,
                         help='embedding dim, used for embedding layer of label: disease type')
     parser.add_argument('--recover', action='store_true', help='if continue training from prior checkpoint,'
                                                                'if use this, all the other parameters are disabled,'

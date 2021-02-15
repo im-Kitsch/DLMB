@@ -55,9 +55,9 @@ def evaluate_model(ckpt_file, device, show_fig=False, save_path=None):
         if dc_gan.if_condition:
             condition = torch.arange(dc_gan.n_class, device=device).reshape(-1, 1)
             condition = condition.repeat(1, 8).reshape(-1)
-            gen_img = dc_gan.generate_fake(batch_size=64, condition=condition)
+            gen_img = dc_gan.generate_fake(batch_size=condition.shape[0], condition=condition)
         else:
-            gen_img = dc_gan.generate_fake(batch_size=64, condition=None)
+            gen_img = dc_gan.generate_fake(batch_size=condition.shape[0], condition=None)
 
     gen_img = torchvision.utils.make_grid(gen_img, nrow=8, padding=2, normalize=True)  # TODO normalize or use minmax?
 

@@ -137,3 +137,5 @@ dmypy.json
 dlmb
 HAM10000
 HAM10000_metadata.csv
+
+cache/

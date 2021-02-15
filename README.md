@@ -27,6 +27,11 @@ A example of training:
 python cwagan_gp.py --data HAM10000 --root $data --csv-file $csv_file
                     --depth 5 --img-size 64 --batch-size 64 --checkpoint-factor 10
 ```
+A example of evaluation:
+```
+python evaluate.py --ckpt-file $ckpt_path --device cuda
+```
+
 To check the learning process use tensorboard, (default in `./runs`), if the image doesn't change with 
 step continuously, try to add `--samples_per_plugin images=0`
  
@@ -95,6 +100,14 @@ optional arguments:
   --checkpoint-factor CHECKPOINT_FACTOR
                         the model will be checked every $ckpt-factor epoch
 
+```
+The parameter of evaluate.py:
+```
+optional arguments:
+  -h, --help            show this help message and exit
+  --ckpt-file CKPT_FILE
+                        check point file path
+  --device {cpu,cuda}   cpu or cuda
 ```
 
 ## TEST-GUI
