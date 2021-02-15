@@ -14,6 +14,20 @@ VAE as awell as semi supervised VAE(ssvae) implementation of
 pyro-example[<sup>3</sup>](#pyro-tutorial)as reference.
 
 
+## Dependency
+The requirements.txt maybe not very complete for running.
+
+But at least using requirements.txt to install the dependency is sufficient 
+for running the framework.
+ 
+Besides if you want to enable GUI, 
+you should install at least tmux and xterm for Ubuntu. The GUI is 
+not tested in Mac and Windows yet. But it should work with small change if you want to use it.
+You just need to modify the gui_qt.py code, to replace "xterm" as 
+like "cmd" for Windows or "rxvt" for mac. 
+
+You may also need to add some additional dependency.
+
 ## Implementation
 TODO
 
@@ -111,7 +125,12 @@ optional arguments:
 ```
 
 ## TEST-GUI
-TODO
+Although generally it is never needed use GUI to for GAN. 
+But you can run follow code to test GUI. 
+It works but not very stable, there would maybe some problem.
+```
+python gui_qt.py
+```
 ## Reference
 <div id="wgan"></div>
 - [1] [Arjovsky M, Chintala S, Bottou L. 
