@@ -1,0 +1,15 @@
+pyro_ppl==1.5.1
+numpy==1.19.2
+torch==1.7.1
+seaborn==0.11.1
+torchsummary==1.5.1
+pandas==1.2.0
+matplotlib==3.3.3
+visdom==0.1.8.9
+tensorflow==2.3.0
+tqdm==4.55.0
+scipy==1.6.0
+torchvision==0.8.2
+tensorboard==2.3.0
+PyQtWebEngine==5.15.2
+

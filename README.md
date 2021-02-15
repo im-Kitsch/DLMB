@@ -131,6 +131,12 @@ It works but not very stable, there would maybe some problem.
 ```
 python gui_qt.py
 ```
+
+The GUI will like so:
+![gui1](vis_img/gui1.png)
+![gui2](vis_img/gui2.png)
+![gui3](vis_img/gui3.png)
+![gui4](vis_img/gui4.png)
 ## Reference
 <div id="wgan"></div>
 - [1] [Arjovsky M, Chintala S, Bottou L. 
