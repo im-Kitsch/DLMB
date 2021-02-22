@@ -1,0 +1,79 @@
+\documentclass[colorback,accentcolor=tud1c,linedtoc,bibtotoc]{tudreport}
+\usepackage{fontspec}	%use LuaLaTeX or XeLaLaTeX as LaTeX engine
+\usepackage{caption}
+%\usepackage{subcaption}
+\usepackage{graphicx}
+\usepackage{placeins}
+\usepackage{amsmath}
+\usepackage[stable]{footmisc}
+\usepackage{ziffer}
+\usepackage{upgreek}
+\usepackage{parskip}
+\usepackage{float}
+\usepackage{listings}
+\usepackage{color}
+%\usepackage{subfig}
+\usepackage{subfigure}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{frame=tb,
+  language=Python,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=right,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3
+}
+
+\title{Deep Learning for Medical Imaging}
+
+\subtitle{Zhiyuan Hu \\
+Maurice Kraus \\ Maxim Kuznetsov \\ Kevin Huy Nguyen }
+
+\institution{FB 20 Informatik \\ Graphisch-Interaktive Systeme}
+
+%ENDE TITELSEITE
+
+%ANFANG DOKUMENT
+\begin{document}
+
+
+
+
+%Titelseite einfügen
+\maketitle
+
+% \begin{center} \
+% 	\linebreak[1]\linebreak[1]\linebreak[1]\linebreak[1]
+% 	\rule{5cm}{0.1mm}\\
+% 	Author1
+% 	\linebreak[1]\linebreak[1]\linebreak[1]\linebreak[1]\linebreak[1]
+% 	\rule{5cm}{0.1mm}\\
+% 	Author2\\
+% \end{center}
+
+\tableofcontents 
+
+\include{week1_4}
+
+\include{week5}
+
+
+
+\begin{thebibliography}{99}
+
+
+
+\end{thebibliography}
+\end{document}
